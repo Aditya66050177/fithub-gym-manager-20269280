@@ -13,6 +13,7 @@ import GymManagement from "./pages/owner/GymManagement";
 import BrowseGyms from "./pages/user/BrowseGyms";
 import GymDetails from "./pages/user/GymDetails";
 import ApplyOwner from "./pages/user/ApplyOwner";
+import SeedData from "./pages/admin/SeedData";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/seed" element={<SeedData />} />
           <Route path="/owner" element={<OwnerDashboard />} />
           <Route path="/owner/gym/:gymId" element={<GymManagement />} />
           <Route path="/user" element={<BrowseGyms />} />
