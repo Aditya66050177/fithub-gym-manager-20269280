@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Dumbbell, LogOut, MapPin, Clock, Search } from 'lucide-react';
+import { Dumbbell, LogOut, MapPin, Clock, Search, Briefcase } from 'lucide-react';
 
 interface Gym {
   id: string;
@@ -101,6 +101,19 @@ export default function BrowseGyms() {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">Browse Gyms</h1>
           <p className="text-muted-foreground mb-6">Find the perfect gym for your fitness journey</p>
+
+          <Card className="mb-8 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5">
+            <CardHeader>
+              <CardTitle>Become a Gym Owner</CardTitle>
+              <CardDescription>Own a gym? List it on FitHub and reach more members</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={() => navigate('/user/apply-owner')} className="w-full sm:w-auto">
+                <Briefcase className="h-4 w-4 mr-2" />
+                Apply Now
+              </Button>
+            </CardContent>
+          </Card>
 
           <div className="relative mb-8">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />

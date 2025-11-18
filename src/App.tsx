@@ -12,6 +12,7 @@ import OwnerDashboard from "./pages/owner/OwnerDashboard";
 import GymManagement from "./pages/owner/GymManagement";
 import BrowseGyms from "./pages/user/BrowseGyms";
 import GymDetails from "./pages/user/GymDetails";
+import ApplyOwner from "./pages/user/ApplyOwner";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/owner" element={<OwnerDashboard />} />
           <Route path="/owner/gym/:gymId" element={<GymManagement />} />
           <Route path="/user" element={<BrowseGyms />} />
+          <Route path="/user/apply-owner" element={<ApplyOwner />} />
           <Route path="/gym/:gymId" element={<GymDetails />} />
           <Route path="/" element={<Index />} />
           <Route path="*" element={<NotFound />} />
