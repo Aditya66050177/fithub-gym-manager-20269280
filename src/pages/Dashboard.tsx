@@ -76,7 +76,7 @@ export default function Dashboard() {
                   <CardDescription>Manage gyms and owners</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full">Go to Admin Dashboard</Button>
+                  <Button className="w-full" onClick={() => navigate('/admin')}>Go to Admin Dashboard</Button>
                 </CardContent>
               </Card>
             )}
