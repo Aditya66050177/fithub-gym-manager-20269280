@@ -49,28 +49,9 @@ create table if not exists public.gyms (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- Create plans table
-create table if not exists public.plans (
-  id uuid primary key default gen_random_uuid(),
-  gym_id uuid references public.gyms(id) on delete cascade not null,
-  name text not null,
-  duration_months integer not null,
-  price decimal(10,2) not null,
-  features jsonb,
-  active boolean default true,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
+-- Plans table already exists, skipping creation
 
--- Create memberships table
-create table if not exists public.memberships (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users(id) on delete cascade not null,
-  plan_id uuid references public.plans(id) on delete cascade not null,
-  start_date date not null,
-  end_date date not null,
-  active boolean default true,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
+-- Memberships table already exists, skipping creation
 
 -- Create payments table
 create table if not exists public.payments (
@@ -209,7 +190,7 @@ create policy "Owners can update their gyms"
 create policy "Anyone can view active plans"
   on public.plans for select
   to authenticated
-  using (active = true or public.has_role(auth.uid(), 'owner') or public.has_role(auth.uid(), 'admin'));
+  using (is_active = true or public.has_role(auth.uid(), 'owner') or public.has_role(auth.uid(), 'admin'));
 
 create policy "Gym owners can manage their plans"
   on public.plans for all
