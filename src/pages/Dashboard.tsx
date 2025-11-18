@@ -12,8 +12,17 @@ export default function Dashboard() {
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
+    } else if (!loading && user && userRole) {
+      // Redirect based on role
+      if (userRole === 'admin') {
+        navigate('/admin');
+      } else if (userRole === 'owner') {
+        navigate('/owner');
+      } else if (userRole === 'user') {
+        navigate('/user');
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, userRole, navigate]);
 
   if (loading) {
     return (

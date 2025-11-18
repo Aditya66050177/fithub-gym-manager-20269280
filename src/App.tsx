@@ -7,6 +7,11 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import OwnerDashboard from "./pages/owner/OwnerDashboard";
+import GymManagement from "./pages/owner/GymManagement";
+import BrowseGyms from "./pages/user/BrowseGyms";
+import GymDetails from "./pages/user/GymDetails";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +24,11 @@ const App = () => (
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/owner" element={<OwnerDashboard />} />
+          <Route path="/owner/gym/:gymId" element={<GymManagement />} />
+          <Route path="/user" element={<BrowseGyms />} />
+          <Route path="/gym/:gymId" element={<GymDetails />} />
           <Route path="/" element={<Index />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
