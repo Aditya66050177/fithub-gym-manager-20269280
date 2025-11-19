@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import UserManagement from "./pages/admin/UserManagement";
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
 import GymManagement from "./pages/owner/GymManagement";
 import BrowseGyms from "./pages/user/BrowseGyms";
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/admin/seed" element={<SeedData />} />
           <Route path="/owner" element={<OwnerDashboard />} />
           <Route path="/owner/gym/:gymId" element={<GymManagement />} />
