@@ -13,6 +13,13 @@ interface GymOwnerRequest {
   user_id: string;
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
+  business_name?: string;
+  business_address?: string;
+  business_phone?: string;
+  business_email?: string;
+  years_in_business?: number;
+  number_of_locations?: number;
+  description?: string;
   profiles: {
     name: string;
     email: string;
@@ -42,6 +49,13 @@ export default function AdminDashboard() {
         user_id,
         status,
         created_at,
+        business_name,
+        business_address,
+        business_phone,
+        business_email,
+        years_in_business,
+        number_of_locations,
+        description,
         profiles (
           name,
           email
@@ -170,8 +184,56 @@ export default function AdminDashboard() {
                   </Badge>
                 </div>
               </CardHeader>
-              {request.status === 'pending' && (
-                <CardContent>
+              <CardContent className="space-y-4">
+                {request.business_name && (
+                  <div className="space-y-3 pb-4 border-b">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Business Name</p>
+                        <p className="text-sm">{request.business_name}</p>
+                      </div>
+                      {request.years_in_business !== undefined && (
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Years in Business</p>
+                          <p className="text-sm">{request.years_in_business} years</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {request.business_phone && (
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Business Phone</p>
+                          <p className="text-sm">{request.business_phone}</p>
+                        </div>
+                      )}
+                      {request.business_email && (
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Business Email</p>
+                          <p className="text-sm">{request.business_email}</p>
+                        </div>
+                      )}
+                    </div>
+                    {request.business_address && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Address</p>
+                        <p className="text-sm">{request.business_address}</p>
+                      </div>
+                    )}
+                    {request.number_of_locations !== undefined && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Number of Locations</p>
+                        <p className="text-sm">{request.number_of_locations}</p>
+                      </div>
+                    )}
+                    {request.description && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Description</p>
+                        <p className="text-sm">{request.description}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {request.status === 'pending' && (
                   <div className="flex gap-2">
                     <Button
                       onClick={() => handleApprove(request.id, request.user_id)}
@@ -189,8 +251,8 @@ export default function AdminDashboard() {
                       Reject
                     </Button>
                   </div>
-                </CardContent>
-              )}
+                )}
+              </CardContent>
             </Card>
           ))}
 
