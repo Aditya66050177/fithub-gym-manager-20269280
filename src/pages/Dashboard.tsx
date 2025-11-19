@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dumbbell, LogOut } from 'lucide-react';
@@ -8,11 +9,33 @@ import { Dumbbell, LogOut } from 'lucide-react';
 export default function Dashboard() {
   const { user, userRole, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (!loading && user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', user.id)
+          .single();
+
+        // @ts-ignore Supabase type inference issue
+        if (data && !data.onboarding_completed) {
+          navigate('/onboarding');
+          return;
+        }
+        setCheckingOnboarding(false);
+      }
+    };
+
+    checkOnboarding();
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
-    } else if (!loading && user && userRole) {
+    } else if (!loading && user && userRole && !checkingOnboarding) {
       // Redirect based on role
       if (userRole === 'admin') {
         navigate('/admin');
@@ -22,9 +45,9 @@ export default function Dashboard() {
         navigate('/user');
       }
     }
-  }, [user, loading, userRole, navigate]);
+  }, [user, loading, userRole, checkingOnboarding, navigate]);
 
-  if (loading) {
+  if (loading || checkingOnboarding) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
