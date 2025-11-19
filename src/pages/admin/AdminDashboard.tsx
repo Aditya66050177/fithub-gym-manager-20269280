@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dumbbell, LogOut, UserCheck, UserX } from 'lucide-react';
+import { Dumbbell, LogOut, UserCheck, UserX, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface GymOwnerRequest {
@@ -132,10 +132,16 @@ export default function AdminDashboard() {
             <Dumbbell className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">FitHub Admin</span>
           </div>
-          <Button variant="outline" onClick={signOut}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => navigate('/admin/users')}>
+              <Users className="h-4 w-4 mr-2" />
+              User Management
+            </Button>
+            <Button variant="outline" onClick={signOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 
