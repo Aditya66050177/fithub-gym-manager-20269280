@@ -42,6 +42,25 @@ interface UserWithRole {
   }>;
 }
 
+interface GymOwnerRequest {
+  id: string;
+  user_id: string;
+  status: string;
+  created_at: string;
+  business_name: string | null;
+  business_address: string | null;
+  business_phone: string | null;
+  business_email: string | null;
+  years_in_business: number | null;
+  number_of_locations: number | null;
+  description: string | null;
+  profiles: {
+    name: string;
+    email: string;
+    phone: string | null;
+  };
+}
+
 export default function UserManagement() {
   const { user, userRole, signOut } = useAuth();
   const navigate = useNavigate();
@@ -54,12 +73,15 @@ export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [newRole, setNewRole] = useState<'admin' | 'owner' | 'user'>('user');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [requests, setRequests] = useState<GymOwnerRequest[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(true);
 
   useEffect(() => {
     if (userRole !== 'admin') {
       navigate('/dashboard');
     } else {
       fetchUsers();
+      fetchRequests();
     }
   }, [userRole, navigate]);
 
@@ -85,6 +107,99 @@ export default function UserManagement() {
       setUsers(data as any);
     }
     setLoading(false);
+  };
+
+  const fetchRequests = async () => {
+    const { data, error } = await supabase
+      .from('gym_owners')
+      .select(`
+        id,
+        user_id,
+        status,
+        created_at,
+        business_name,
+        business_address,
+        business_phone,
+        business_email,
+        years_in_business,
+        number_of_locations,
+        description,
+        profiles (
+          name,
+          email,
+          phone
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setRequests(data as any);
+    }
+    setRequestsLoading(false);
+  };
+
+  const handleApprove = async (requestId: string, userId: string) => {
+    const { error: updateError } = await supabase
+      .from('gym_owners')
+      // @ts-expect-error Supabase type inference issue
+      .update({ status: 'approved' })
+      .eq('id', requestId);
+
+    if (updateError) {
+      toast({
+        title: 'Error',
+        description: 'Failed to approve request',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const { error: roleError } = await supabase
+      .from('user_roles')
+      // @ts-expect-error Supabase type inference issue
+      .update({ role: 'owner' })
+      .eq('user_id', userId);
+
+    if (roleError) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update user role',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    toast({
+      title: 'Success',
+      description: 'Gym owner request approved successfully',
+    });
+
+    fetchRequests();
+    fetchUsers();
+  };
+
+  const handleReject = async (requestId: string) => {
+    const { error } = await supabase
+      .from('gym_owners')
+      // @ts-expect-error Supabase type inference issue
+      .update({ status: 'rejected' })
+      .eq('id', requestId);
+
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to reject request',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    toast({
+      title: 'Success',
+      description: 'Gym owner request rejected',
+    });
+
+    fetchRequests();
   };
 
   const filterUsers = () => {
@@ -166,12 +281,12 @@ export default function UserManagement() {
       <header className="bg-card border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/admin')}>
+            <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2">
               <Shield className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">User Management</span>
+              <span className="text-xl font-bold">Admin Panel</span>
             </div>
           </div>
           <Button variant="outline" onClick={signOut}>
@@ -181,7 +296,108 @@ export default function UserManagement() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 space-y-6">
+        {/* Gym Owner Applications Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Gym Owner Applications</CardTitle>
+            <CardDescription>Review and approve gym owner requests</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {requests.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">No applications found</p>
+            ) : (
+              <div className="space-y-4">
+                {requests.map((request) => (
+                  <Card key={request.id}>
+                    <CardContent className="pt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold text-lg">{request.profiles.name}</h3>
+                            <p className="text-sm text-muted-foreground">{request.profiles.email}</p>
+                            {request.profiles.phone && (
+                              <p className="text-sm text-muted-foreground">{request.profiles.phone}</p>
+                            )}
+                          </div>
+                          <Badge
+                            variant={
+                              request.status === 'approved'
+                                ? 'default'
+                                : request.status === 'rejected'
+                                ? 'destructive'
+                                : 'secondary'
+                            }
+                          >
+                            {request.status}
+                          </Badge>
+                        </div>
+
+                        {request.business_name && (
+                          <div className="border-t pt-4 space-y-2">
+                            <h4 className="font-semibold">Business Details</h4>
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div>
+                                <span className="text-muted-foreground">Business Name:</span>
+                                <p className="font-medium">{request.business_name}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Email:</span>
+                                <p className="font-medium">{request.business_email}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Phone:</span>
+                                <p className="font-medium">{request.business_phone}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Address:</span>
+                                <p className="font-medium">{request.business_address}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Years in Business:</span>
+                                <p className="font-medium">{request.years_in_business}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">Locations:</span>
+                                <p className="font-medium">{request.number_of_locations}</p>
+                              </div>
+                            </div>
+                            {request.description && (
+                              <div className="mt-2">
+                                <span className="text-muted-foreground">Description:</span>
+                                <p className="mt-1 text-sm">{request.description}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {request.status === 'pending' && (
+                          <div className="flex gap-2 pt-4">
+                            <Button
+                              onClick={() => handleApprove(request.id, request.user_id)}
+                              className="flex-1"
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              onClick={() => handleReject(request.id)}
+                              className="flex-1"
+                            >
+                              Reject
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* User Management Section */}
         <Card className="mb-6">
           <CardHeader>
             <CardTitle>Search & Filter</CardTitle>
