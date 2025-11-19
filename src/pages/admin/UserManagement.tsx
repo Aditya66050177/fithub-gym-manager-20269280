@@ -77,13 +77,18 @@ export default function UserManagement() {
   const [requestsLoading, setRequestsLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    
     if (userRole !== 'admin') {
       navigate('/dashboard');
     } else {
       fetchUsers();
       fetchRequests();
     }
-  }, [userRole, navigate]);
+  }, [user, userRole, navigate]);
 
   useEffect(() => {
     filterUsers();
