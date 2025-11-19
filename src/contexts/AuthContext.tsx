@@ -119,12 +119,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out."
-    });
-    
-    window.location.href = '/auth';
+    // Use replace to prevent back button issues
+    window.location.replace('/auth');
   };
 
   return (
