@@ -105,13 +105,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUserRole(null);
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out."
-    });
-    window.location.href = '/auth';
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      setUserRole(null);
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out."
+      });
+      window.location.href = '/auth';
+    } catch (error: any) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Logout failed",
+        description: error.message || "Failed to logout. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
