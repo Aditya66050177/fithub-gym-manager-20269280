@@ -21,16 +21,6 @@ interface Plan {
   price: number;
   features: string[];
   is_active: boolean;
-  description: string | null;
-  plan_type: 'Basic' | 'Premium' | 'Student' | 'Limited-Time' | null;
-  discounted_price: number | null;
-  max_users: number | null;
-  color_tag: string | null;
-  badge_text: string | null;
-  image_url: string | null;
-  gym_amenities: string[] | null;
-  start_date: string | null;
-  end_date: string | null;
 }
 
 interface Gym {
@@ -46,13 +36,6 @@ const initialFormData = {
   duration_days: '',
   price: '',
   features: '',
-  description: '',
-  plan_type: '',
-  discounted_price: '',
-  max_users: '',
-  color_tag: '#FFD700',
-  badge_text: '',
-  gym_amenities: '',
 };
 
 export default function GymManagement() {
@@ -83,7 +66,7 @@ export default function GymManagement() {
   const fetchGymData = async () => {
     if (!gymId) return;
 
-    const { data: gymData, error: gymError } = await supabase
+    const { data: gymData, error: gymError } = await (supabase as any)
       .from('gyms')
       .select('*')
       .eq('id', gymId)
@@ -101,7 +84,7 @@ export default function GymManagement() {
 
     setGym(gymData);
 
-    const { data: plansData, error: plansError } = await supabase
+    const { data: plansData, error: plansError } = await (supabase as any)
       .from('plans')
       .select('*')
       .eq('gym_id', gymId)
@@ -128,11 +111,6 @@ export default function GymManagement() {
       .map((f) => f.trim())
       .filter((f) => f);
 
-    const amenities = planFormData.gym_amenities
-      .split(',')
-      .map((a) => a.trim())
-      .filter((a) => a);
-
     const planData = {
       gym_id: gymId,
       name: planFormData.name,
@@ -140,24 +118,17 @@ export default function GymManagement() {
       price: parseFloat(planFormData.price),
       features,
       is_active: true,
-      description: planFormData.description || null,
-      plan_type: planFormData.plan_type || null,
-      discounted_price: planFormData.discounted_price ? parseFloat(planFormData.discounted_price) : null,
-      max_users: planFormData.max_users ? parseInt(planFormData.max_users) : null,
-      color_tag: planFormData.color_tag || '#FFD700',
-      badge_text: planFormData.badge_text || null,
-      gym_amenities: amenities.length > 0 ? amenities : null,
     };
 
     let error;
     if (editingPlan) {
-      const result = await supabase
+      const result = await (supabase as any)
         .from('plans')
         .update(planData)
         .eq('id', editingPlan.id);
       error = result.error;
     } else {
-      const result = await supabase.from('plans').insert(planData);
+      const result = await (supabase as any).from('plans').insert([planData]);
       error = result.error;
     }
 
@@ -188,13 +159,6 @@ export default function GymManagement() {
       duration_days: plan.duration_days.toString(),
       price: plan.price.toString(),
       features: plan.features.join(', '),
-      description: plan.description || '',
-      plan_type: plan.plan_type || '',
-      discounted_price: plan.discounted_price?.toString() || '',
-      max_users: plan.max_users?.toString() || '',
-      color_tag: plan.color_tag || '#FFD700',
-      badge_text: plan.badge_text || '',
-      gym_amenities: plan.gym_amenities?.join(', ') || '',
     });
     setOpenPlanDialog(true);
   };
@@ -202,7 +166,7 @@ export default function GymManagement() {
   const handleDeletePlan = async (planId: string) => {
     if (!confirm('Are you sure you want to delete this plan?')) return;
 
-    const { error } = await supabase.from('plans').delete().eq('id', planId);
+    const { error } = await (supabase as any).from('plans').delete().eq('id', planId);
 
     if (error) {
       toast({
@@ -221,7 +185,7 @@ export default function GymManagement() {
   };
 
   const togglePlanStatus = async (planId: string, currentStatus: boolean) => {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('plans')
       .update({ is_active: !currentStatus })
       .eq('id', planId);
@@ -298,47 +262,14 @@ export default function GymManagement() {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="plan-name">Plan Name *</Label>
-                        <Input
-                          id="plan-name"
-                          placeholder="e.g., Gold Plan"
-                          value={planFormData.name}
-                          onChange={(e) =>
-                            setPlanFormData({ ...planFormData, name: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="plan-type">Plan Type</Label>
-                        <Select
-                          value={planFormData.plan_type}
-                          onValueChange={(value) =>
-                            setPlanFormData({ ...planFormData, plan_type: value })
-                          }
-                        >
-                          <SelectTrigger id="plan-type">
-                            <SelectValue placeholder="Select type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Basic">Basic</SelectItem>
-                            <SelectItem value="Premium">Premium</SelectItem>
-                            <SelectItem value="Student">Student</SelectItem>
-                            <SelectItem value="Limited-Time">Limited-Time</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
                     <div>
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea
-                        id="description"
-                        placeholder="e.g., Access to all equipment + 2 personal training sessions"
-                        value={planFormData.description}
+                      <Label htmlFor="plan-name">Plan Name *</Label>
+                      <Input
+                        id="plan-name"
+                        placeholder="e.g., Gold Plan, Monthly Pass"
+                        value={planFormData.name}
                         onChange={(e) =>
-                          setPlanFormData({ ...planFormData, description: e.target.value })
+                          setPlanFormData({ ...planFormData, name: e.target.value })
                         }
                       />
                     </div>
@@ -357,21 +288,6 @@ export default function GymManagement() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="max-users">Max Users</Label>
-                        <Input
-                          id="max-users"
-                          type="number"
-                          placeholder="Leave empty for unlimited"
-                          value={planFormData.max_users}
-                          onChange={(e) =>
-                            setPlanFormData({ ...planFormData, max_users: e.target.value })
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
                         <Label htmlFor="price">Price (₹) *</Label>
                         <Input
                           id="price"
@@ -380,18 +296,6 @@ export default function GymManagement() {
                           value={planFormData.price}
                           onChange={(e) =>
                             setPlanFormData({ ...planFormData, price: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="discounted-price">Discounted Price (₹)</Label>
-                        <Input
-                          id="discounted-price"
-                          type="number"
-                          placeholder="e.g., 799"
-                          value={planFormData.discounted_price}
-                          onChange={(e) =>
-                            setPlanFormData({ ...planFormData, discounted_price: e.target.value })
                           }
                         />
                       </div>
@@ -408,43 +312,6 @@ export default function GymManagement() {
                         }
                       />
                     </div>
-
-                    <div>
-                      <Label htmlFor="amenities">Gym Amenities Included (comma separated)</Label>
-                      <Textarea
-                        id="amenities"
-                        placeholder="e.g., Sauna, Steam room, Locker, Shower"
-                        value={planFormData.gym_amenities}
-                        onChange={(e) =>
-                          setPlanFormData({ ...planFormData, gym_amenities: e.target.value })
-                        }
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="color-tag">Color Tag</Label>
-                        <Input
-                          id="color-tag"
-                          type="color"
-                          value={planFormData.color_tag}
-                          onChange={(e) =>
-                            setPlanFormData({ ...planFormData, color_tag: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="badge">Badge Text</Label>
-                        <Input
-                          id="badge"
-                          placeholder="e.g., Most Popular, Best Value"
-                          value={planFormData.badge_text}
-                          onChange={(e) =>
-                            setPlanFormData({ ...planFormData, badge_text: e.target.value })
-                          }
-                        />
-                      </div>
-                    </div>
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => handleDialogClose(false)}>
@@ -460,24 +327,11 @@ export default function GymManagement() {
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {plans.map((plan) => (
-                <Card key={plan.id} className="relative">
-                  {plan.badge_text && (
-                    <Badge
-                      className="absolute -top-2 -right-2 z-10"
-                      style={{ backgroundColor: plan.color_tag || undefined }}
-                    >
-                      {plan.badge_text}
-                    </Badge>
-                  )}
+                <Card key={plan.id}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div>
-                        <CardTitle className="flex items-center gap-2">
-                          {plan.name}
-                          {plan.plan_type && (
-                            <Badge variant="outline">{plan.plan_type}</Badge>
-                          )}
-                        </CardTitle>
+                        <CardTitle>{plan.name}</CardTitle>
                         <CardDescription>
                           {plan.duration_days} days membership
                         </CardDescription>
@@ -486,29 +340,13 @@ export default function GymManagement() {
                         {plan.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
-                    {plan.description && (
-                      <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
-                    )}
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
-                      <div className="flex items-center gap-2">
-                        {plan.discounted_price && (
-                          <div className="flex items-center gap-1 text-lg text-muted-foreground line-through">
-                            <IndianRupee className="h-4 w-4" />
-                            {plan.price}
-                          </div>
-                        )}
-                        <div className="flex items-center gap-1 text-2xl font-bold">
-                          <IndianRupee className="h-5 w-5" />
-                          {plan.discounted_price || plan.price}
-                        </div>
+                      <div className="flex items-center gap-1 text-2xl font-bold">
+                        <IndianRupee className="h-5 w-5" />
+                        {plan.price}
                       </div>
-                      {plan.max_users && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Limited to {plan.max_users} users
-                        </p>
-                      )}
                     </div>
 
                     {plan.features.length > 0 && (
@@ -518,19 +356,6 @@ export default function GymManagement() {
                           {plan.features.map((feature, idx) => (
                             <li key={idx} className="text-sm text-muted-foreground">
                               • {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {plan.gym_amenities && plan.gym_amenities.length > 0 && (
-                      <div className="mb-4">
-                        <p className="text-sm font-semibold mb-2">Amenities:</p>
-                        <ul className="space-y-1">
-                          {plan.gym_amenities.map((amenity, idx) => (
-                            <li key={idx} className="text-sm text-muted-foreground">
-                              • {amenity}
                             </li>
                           ))}
                         </ul>
