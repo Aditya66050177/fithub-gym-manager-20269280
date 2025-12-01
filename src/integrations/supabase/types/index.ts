@@ -114,16 +114,6 @@ export type Database = {
           features: string[]
           is_active: boolean
           created_at: string
-          description: string | null
-          plan_type: 'Basic' | 'Premium' | 'Student' | 'Limited-Time' | null
-          discounted_price: number | null
-          max_users: number | null
-          color_tag: string | null
-          badge_text: string | null
-          image_url: string | null
-          gym_amenities: string[] | null
-          start_date: string | null
-          end_date: string | null
         }
         Insert: {
           id?: string
@@ -134,16 +124,6 @@ export type Database = {
           features?: string[]
           is_active?: boolean
           created_at?: string
-          description?: string | null
-          plan_type?: 'Basic' | 'Premium' | 'Student' | 'Limited-Time' | null
-          discounted_price?: number | null
-          max_users?: number | null
-          color_tag?: string | null
-          badge_text?: string | null
-          image_url?: string | null
-          gym_amenities?: string[] | null
-          start_date?: string | null
-          end_date?: string | null
         }
         Update: {
           id?: string
@@ -154,16 +134,6 @@ export type Database = {
           features?: string[]
           is_active?: boolean
           created_at?: string
-          description?: string | null
-          plan_type?: 'Basic' | 'Premium' | 'Student' | 'Limited-Time' | null
-          discounted_price?: number | null
-          max_users?: number | null
-          color_tag?: string | null
-          badge_text?: string | null
-          image_url?: string | null
-          gym_amenities?: string[] | null
-          start_date?: string | null
-          end_date?: string | null
         }
       }
       memberships: {
