@@ -5,7 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Dumbbell, MapPin, Clock, IndianRupee, CheckCircle } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { ArrowLeft, Dumbbell, MapPin, Clock, IndianRupee, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Plan {
@@ -23,6 +24,7 @@ interface Gym {
   description: string;
   location: string;
   timings: string;
+  photos: string[];
 }
 
 export default function GymDetails() {
@@ -101,7 +103,7 @@ export default function GymDetails() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-4">{gym.name}</h1>
             <p className="text-lg text-muted-foreground mb-6">{gym.description}</p>
@@ -116,6 +118,30 @@ export default function GymDetails() {
                 <span>{gym.timings}</span>
               </div>
             </div>
+
+            {gym.photos && gym.photos.length > 0 && (
+              <Card className="mb-8">
+                <CardContent className="p-6">
+                  <Carousel className="w-full">
+                    <CarouselContent>
+                      {gym.photos.map((photo, index) => (
+                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                          <div className="aspect-video relative overflow-hidden rounded-lg">
+                            <img
+                              src={photo}
+                              alt={`${gym.name} photo ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           <div>

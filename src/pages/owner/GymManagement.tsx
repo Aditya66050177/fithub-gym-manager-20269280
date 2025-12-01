@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Dumbbell, Plus, IndianRupee, Users, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Dumbbell, Plus, IndianRupee, Users, Edit, Trash2, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Plan {
@@ -29,6 +29,7 @@ interface Gym {
   description: string;
   location: string;
   timings: string;
+  photos: string[];
 }
 
 const initialFormData = {
@@ -49,6 +50,7 @@ export default function GymManagement() {
   const [openPlanDialog, setOpenPlanDialog] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
   const [planFormData, setPlanFormData] = useState(initialFormData);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -214,6 +216,93 @@ export default function GymManagement() {
     }
   };
 
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || !gymId || !gym) return;
+
+    const files = Array.from(event.target.files);
+    setUploading(true);
+
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${gymId}/${Math.random()}.${fileExt}`;
+
+        const { error: uploadError } = await (supabase as any).storage
+          .from('gym-photos')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = (supabase as any).storage
+          .from('gym-photos')
+          .getPublicUrl(fileName);
+
+        return publicUrl;
+      });
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+      const newPhotos = [...(gym.photos || []), ...uploadedUrls];
+
+      const { error: updateError } = await (supabase as any)
+        .from('gyms')
+        .update({ photos: newPhotos })
+        .eq('id', gymId);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: 'Success',
+        description: 'Photos uploaded successfully',
+      });
+
+      fetchGymData();
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to upload photos',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDeletePhoto = async (photoUrl: string) => {
+    if (!gymId || !gym) return;
+
+    try {
+      const fileName = photoUrl.split('/').slice(-2).join('/');
+      
+      const { error: deleteError } = await (supabase as any).storage
+        .from('gym-photos')
+        .remove([fileName]);
+
+      if (deleteError) throw deleteError;
+
+      const newPhotos = gym.photos.filter((url) => url !== photoUrl);
+
+      const { error: updateError } = await (supabase as any)
+        .from('gyms')
+        .update({ photos: newPhotos })
+        .eq('id', gymId);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: 'Success',
+        description: 'Photo deleted successfully',
+      });
+
+      fetchGymData();
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to delete photo',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (loading || !gym) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -242,6 +331,7 @@ export default function GymManagement() {
         <Tabs defaultValue="plans" className="w-full">
           <TabsList>
             <TabsTrigger value="plans">Plans</TabsTrigger>
+            <TabsTrigger value="photos">Photos</TabsTrigger>
             <TabsTrigger value="members">Members</TabsTrigger>
           </TabsList>
 
@@ -400,6 +490,65 @@ export default function GymManagement() {
                 </Card>
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="photos" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gym Photos</CardTitle>
+                <CardDescription>
+                  Upload photos of your gym to attract more members
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handlePhotoUpload}
+                    disabled={uploading}
+                    className="flex-1"
+                    id="photo-upload"
+                  />
+                  <Button
+                    variant="outline"
+                    disabled={uploading}
+                    onClick={() => document.getElementById('photo-upload')?.click()}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    {uploading ? 'Uploading...' : 'Upload Photos'}
+                  </Button>
+                </div>
+
+                {gym.photos && gym.photos.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {gym.photos.map((photo, index) => (
+                      <div key={index} className="relative group aspect-square">
+                        <img
+                          src={photo}
+                          alt={`${gym.name} photo ${index + 1}`}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => handleDeletePhoto(photo)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 border-2 border-dashed rounded-lg">
+                    <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">No photos uploaded yet</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="members">
