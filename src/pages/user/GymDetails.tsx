@@ -41,20 +41,25 @@ export default function GymDetails() {
   const fetchGymDetails = async () => {
     if (!gymId) return;
 
-    const { data: gymData, error: gymError } = await supabase
+    const { data: gymData, error: gymError } = await (supabase as any)
       .from('gyms')
       .select('*')
       .eq('id', gymId)
-      .single();
+      .maybeSingle();
 
     if (gymError || !gymData) {
+      toast({
+        title: 'Gym not found',
+        description: 'The gym you are looking for does not exist.',
+        variant: 'destructive',
+      });
       navigate('/user');
       return;
     }
 
     setGym(gymData);
 
-    const { data: plansData, error: plansError } = await supabase
+    const { data: plansData, error: plansError } = await (supabase as any)
       .from('plans')
       .select('*')
       .eq('gym_id', gymId)

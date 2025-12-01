@@ -46,7 +46,7 @@ export default function BrowseGyms() {
   }, [searchQuery, gyms]);
 
   const fetchGyms = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('gyms')
       .select(`
         id,
