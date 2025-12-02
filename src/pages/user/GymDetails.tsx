@@ -24,6 +24,7 @@ interface Gym {
   description: string;
   address: string;
   city: string;
+  state: string;
   timings: string;
   photos: string[];
 }
@@ -112,7 +113,7 @@ export default function GymDetails() {
             <div className="flex flex-wrap gap-4 mb-6">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <MapPin className="h-5 w-5" />
-                <span>{gym.city}, {gym.address}</span>
+                <span>{gym.address}, {gym.city}, {gym.state}</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Clock className="h-5 w-5" />
