@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 interface Plan {
   id: string;
   name: string;
-  duration_days: number;
+  duration_months: number;
   price: number;
   features: string[];
   is_active: boolean;
@@ -40,7 +40,7 @@ interface Gym {
 
 const initialFormData = {
   name: '',
-  duration_days: '',
+  duration_months: '',
   price: '',
   features: '',
 };
@@ -122,7 +122,7 @@ export default function GymManagement() {
     const planData = {
       gym_id: gymId,
       name: planFormData.name,
-      duration_days: parseInt(planFormData.duration_days),
+      duration_months: parseInt(planFormData.duration_months),
       price: parseFloat(planFormData.price),
       features,
       is_active: true,
@@ -164,7 +164,7 @@ export default function GymManagement() {
     setEditingPlan(plan);
     setPlanFormData({
       name: plan.name,
-      duration_days: plan.duration_days.toString(),
+      duration_months: plan.duration_months.toString(),
       price: plan.price.toString(),
       features: plan.features.join(', '),
     });
@@ -372,14 +372,14 @@ export default function GymManagement() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="duration">Duration (days) *</Label>
+                        <Label htmlFor="duration">Duration (months) *</Label>
                         <Input
                           id="duration"
                           type="number"
-                          placeholder="e.g., 30, 90, 365"
-                          value={planFormData.duration_days}
+                          placeholder="e.g., 1, 3, 6, 12"
+                          value={planFormData.duration_months}
                           onChange={(e) =>
-                            setPlanFormData({ ...planFormData, duration_days: e.target.value })
+                            setPlanFormData({ ...planFormData, duration_months: e.target.value })
                           }
                         />
                       </div>
@@ -429,7 +429,7 @@ export default function GymManagement() {
                       <div>
                         <CardTitle>{plan.name}</CardTitle>
                         <CardDescription>
-                          {plan.duration_days} days membership
+                          {plan.duration_months} month{plan.duration_months !== 1 ? 's' : ''} membership
                         </CardDescription>
                       </div>
                       <Badge variant={plan.is_active ? 'default' : 'secondary'}>
