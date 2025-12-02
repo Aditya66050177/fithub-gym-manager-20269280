@@ -27,7 +27,7 @@ interface Gym {
   id: string;
   name: string;
   description: string;
-  location: string;
+  address: string;
   timings: string;
   photos: string[];
 }
@@ -325,7 +325,7 @@ export default function GymManagement() {
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">{gym.name}</h1>
-          <p className="text-muted-foreground">{gym.location}</p>
+          <p className="text-muted-foreground">{gym.address}</p>
         </div>
 
         <Tabs defaultValue="plans" className="w-full">

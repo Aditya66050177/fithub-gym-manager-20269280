@@ -11,7 +11,7 @@ interface Gym {
   id: string;
   name: string;
   description: string;
-  location: string;
+  address: string;
   timings: string;
   plans: { id: string; price: number }[];
 }
@@ -37,7 +37,7 @@ export default function BrowseGyms() {
       const filtered = gyms.filter(
         (gym) =>
           gym.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          gym.location.toLowerCase().includes(searchQuery.toLowerCase())
+          gym.address.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredGyms(filtered);
     } else {
@@ -52,7 +52,7 @@ export default function BrowseGyms() {
         id,
         name,
         description,
-        location,
+        address,
         timings,
         plans!inner (
           id,
@@ -142,7 +142,7 @@ export default function BrowseGyms() {
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span>{gym.location}</span>
+                      <span>{gym.address}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Clock className="h-4 w-4" />

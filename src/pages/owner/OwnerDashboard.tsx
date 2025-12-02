@@ -15,7 +15,7 @@ interface Gym {
   id: string;
   name: string;
   description: string;
-  location: string;
+  address: string;
   timings: string;
   plans: { id: string }[];
 }
@@ -30,7 +30,7 @@ export default function OwnerDashboard() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    location: '',
+    address: '',
     timings: '',
   });
 
@@ -51,7 +51,7 @@ export default function OwnerDashboard() {
         id,
         name,
         description,
-        location,
+        address,
         timings,
         plans (id)
       `)
@@ -70,7 +70,7 @@ export default function OwnerDashboard() {
       owner_id: user.id,
       name: formData.name,
       description: formData.description,
-      location: formData.location,
+      address: formData.address,
       timings: formData.timings,
     } as any);
 
@@ -88,7 +88,7 @@ export default function OwnerDashboard() {
       description: 'Gym created successfully',
     });
     setOpenDialog(false);
-    setFormData({ name: '', description: '', location: '', timings: '' });
+    setFormData({ name: '', description: '', address: '', timings: '' });
     fetchGyms();
   };
 
@@ -148,11 +148,11 @@ export default function OwnerDashboard() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="address">Address</Label>
                   <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    id="address"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   />
                 </div>
                 <div>
@@ -180,7 +180,7 @@ export default function OwnerDashboard() {
                   <Building2 className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="mt-2">{gym.name}</CardTitle>
-                <CardDescription>{gym.location}</CardDescription>
+                <CardDescription>{gym.address}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">{gym.description}</p>
