@@ -109,7 +109,7 @@ export type Database = {
           id: string
           gym_id: string
           name: string
-          duration_days: number
+          duration_months: number
           price: number
           features: string[]
           is_active: boolean
@@ -119,7 +119,7 @@ export type Database = {
           id?: string
           gym_id: string
           name: string
-          duration_days: number
+          duration_months: number
           price: number
           features?: string[]
           is_active?: boolean
@@ -129,7 +129,7 @@ export type Database = {
           id?: string
           gym_id?: string
           name?: string
-          duration_days?: number
+          duration_months?: number
           price?: number
           features?: string[]
           is_active?: boolean
