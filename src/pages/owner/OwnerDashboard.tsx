@@ -18,6 +18,7 @@ interface Gym {
   address: string;
   city: string;
   state: string;
+  pincode: string;
   timings: string;
   plans: { id: string }[];
 }
@@ -35,6 +36,7 @@ export default function OwnerDashboard() {
     address: '',
     city: '',
     state: '',
+    pincode: '',
     timings: '',
   });
 
@@ -58,6 +60,7 @@ export default function OwnerDashboard() {
         address,
         city,
         state,
+        pincode,
         timings,
         plans (id)
       `)
@@ -89,6 +92,7 @@ export default function OwnerDashboard() {
       address: formData.address,
       city: formData.city,
       state: formData.state,
+      pincode: formData.pincode,
       timings: formData.timings,
     } as any);
 
@@ -107,7 +111,7 @@ export default function OwnerDashboard() {
       description: 'Gym created successfully',
     });
     setOpenDialog(false);
-    setFormData({ name: '', description: '', address: '', city: '', state: '', timings: '' });
+    setFormData({ name: '', description: '', address: '', city: '', state: '', pincode: '', timings: '' });
     fetchGyms();
   };
 
@@ -188,6 +192,14 @@ export default function OwnerDashboard() {
                     id="state"
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="pincode">Pincode</Label>
+                  <Input
+                    id="pincode"
+                    value={formData.pincode}
+                    onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
                   />
                 </div>
                 <div>
