@@ -159,12 +159,12 @@ export default function OwnerDashboard() {
                 Create Gym
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] flex flex-col">
               <DialogHeader>
                 <DialogTitle>Create New Gym</DialogTitle>
                 <DialogDescription>Add your gym details</DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto pr-2 flex-1">
                 <div>
                   <Label htmlFor="name">Gym Name</Label>
                   <Input
