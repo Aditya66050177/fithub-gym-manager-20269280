@@ -28,6 +28,7 @@ interface Gym {
   name: string;
   description: string;
   address: string;
+  city: string;
   timings: string;
   photos: string[];
 }

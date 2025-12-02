@@ -16,6 +16,7 @@ interface Gym {
   name: string;
   description: string;
   address: string;
+  city: string;
   timings: string;
   plans: { id: string }[];
 }
@@ -31,6 +32,7 @@ export default function OwnerDashboard() {
     name: '',
     description: '',
     address: '',
+    city: '',
     timings: '',
   });
 
@@ -52,6 +54,7 @@ export default function OwnerDashboard() {
         name,
         description,
         address,
+        city,
         timings,
         plans (id)
       `)
@@ -71,6 +74,7 @@ export default function OwnerDashboard() {
       name: formData.name,
       description: formData.description,
       address: formData.address,
+      city: formData.city,
       timings: formData.timings,
     } as any);
 
@@ -88,7 +92,7 @@ export default function OwnerDashboard() {
       description: 'Gym created successfully',
     });
     setOpenDialog(false);
-    setFormData({ name: '', description: '', address: '', timings: '' });
+    setFormData({ name: '', description: '', address: '', city: '', timings: '' });
     fetchGyms();
   };
 
@@ -156,6 +160,14 @@ export default function OwnerDashboard() {
                   />
                 </div>
                 <div>
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  />
+                </div>
+                <div>
                   <Label htmlFor="timings">Timings</Label>
                   <Input
                     id="timings"
@@ -180,7 +192,7 @@ export default function OwnerDashboard() {
                   <Building2 className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="mt-2">{gym.name}</CardTitle>
-                <CardDescription>{gym.address}</CardDescription>
+                <CardDescription>{gym.city} - {gym.address}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">{gym.description}</p>

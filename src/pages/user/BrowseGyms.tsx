@@ -12,6 +12,7 @@ interface Gym {
   name: string;
   description: string;
   address: string;
+  city: string;
   timings: string;
   plans: { id: string; price: number }[];
 }
@@ -53,6 +54,7 @@ export default function BrowseGyms() {
         name,
         description,
         address,
+        city,
         timings,
         plans!inner (
           id,
@@ -142,7 +144,7 @@ export default function BrowseGyms() {
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span>{gym.address}</span>
+                      <span>{gym.city}, {gym.address}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Clock className="h-4 w-4" />
