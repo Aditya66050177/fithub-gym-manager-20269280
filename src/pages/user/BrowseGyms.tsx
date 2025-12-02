@@ -15,6 +15,8 @@ interface Gym {
   city: string;
   state: string;
   pincode: string;
+  opening_time: string;
+  closing_time: string;
   timings: string;
   plans: { id: string; price: number }[];
 }
@@ -59,6 +61,8 @@ export default function BrowseGyms() {
         city,
         state,
         pincode,
+        opening_time,
+        closing_time,
         timings,
         plans!inner (
           id,

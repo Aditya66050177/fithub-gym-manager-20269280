@@ -19,6 +19,8 @@ interface Gym {
   city: string;
   state: string;
   pincode: string;
+  opening_time: string;
+  closing_time: string;
   timings: string;
   plans: { id: string }[];
 }
@@ -37,6 +39,8 @@ export default function OwnerDashboard() {
     city: '',
     state: '',
     pincode: '',
+    opening_time: '',
+    closing_time: '',
     timings: '',
   });
 
@@ -61,6 +65,8 @@ export default function OwnerDashboard() {
         city,
         state,
         pincode,
+        opening_time,
+        closing_time,
         timings,
         plans (id)
       `)
@@ -82,6 +88,9 @@ export default function OwnerDashboard() {
       address: formData.address,
       city: formData.city,
       state: formData.state,
+      pincode: formData.pincode,
+      opening_time: formData.opening_time,
+      closing_time: formData.closing_time,
       timings: formData.timings,
     });
 
@@ -93,6 +102,8 @@ export default function OwnerDashboard() {
       city: formData.city,
       state: formData.state,
       pincode: formData.pincode,
+      opening_time: formData.opening_time,
+      closing_time: formData.closing_time,
       timings: formData.timings,
     } as any);
 
@@ -111,7 +122,7 @@ export default function OwnerDashboard() {
       description: 'Gym created successfully',
     });
     setOpenDialog(false);
-    setFormData({ name: '', description: '', address: '', city: '', state: '', pincode: '', timings: '' });
+    setFormData({ name: '', description: '', address: '', city: '', state: '', pincode: '', opening_time: '', closing_time: '', timings: '' });
     fetchGyms();
   };
 
@@ -203,10 +214,28 @@ export default function OwnerDashboard() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="timings">Timings</Label>
+                  <Label htmlFor="opening_time">Opening Time</Label>
+                  <Input
+                    id="opening_time"
+                    type="time"
+                    value={formData.opening_time}
+                    onChange={(e) => setFormData({ ...formData, opening_time: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="closing_time">Closing Time</Label>
+                  <Input
+                    id="closing_time"
+                    type="time"
+                    value={formData.closing_time}
+                    onChange={(e) => setFormData({ ...formData, closing_time: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="timings">Timings (Description)</Label>
                   <Input
                     id="timings"
-                    placeholder="e.g., 6 AM - 10 PM"
+                    placeholder="e.g., 6 AM - 10 PM, Closed on Sundays"
                     value={formData.timings}
                     onChange={(e) => setFormData({ ...formData, timings: e.target.value })}
                   />
