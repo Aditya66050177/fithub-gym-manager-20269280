@@ -72,6 +72,16 @@ export default function OwnerDashboard() {
   const handleCreateGym = async () => {
     if (!user) return;
 
+    console.log('Creating gym with data:', {
+      owner_id: user.id,
+      name: formData.name,
+      description: formData.description,
+      address: formData.address,
+      city: formData.city,
+      state: formData.state,
+      timings: formData.timings,
+    });
+
     const { error } = await supabase.from('gyms').insert({
       owner_id: user.id,
       name: formData.name,
@@ -83,9 +93,10 @@ export default function OwnerDashboard() {
     } as any);
 
     if (error) {
+      console.error('Gym creation error:', error);
       toast({
         title: 'Error',
-        description: 'Failed to create gym',
+        description: error.message || 'Failed to create gym',
         variant: 'destructive',
       });
       return;
