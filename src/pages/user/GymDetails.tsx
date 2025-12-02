@@ -25,6 +25,7 @@ interface Gym {
   address: string;
   city: string;
   state: string;
+  pincode: string;
   timings: string;
   photos: string[];
 }

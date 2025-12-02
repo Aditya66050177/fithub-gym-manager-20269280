@@ -26,10 +26,12 @@ interface Plan {
 interface Gym {
   id: string;
   name: string;
+  owner_id: string;
   description: string;
   address: string;
   city: string;
   state: string;
+  pincode: string;
   timings: string;
   photos: string[];
 }
